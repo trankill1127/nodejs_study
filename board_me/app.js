@@ -9,6 +9,12 @@ app.engine("handlebars", handlebars.create({helpers: require("./configs/handleba
 app.set("view engine", "handlebars"); //view engine로 사용할 템플릿 엔진 등록
 app.set("views", __dirname+"/views"); //템플릿의 위치를 views 디렉터리로 등록
 
+//request의 body에 담긴 json 데이터를 사용하기 위한 미들웨어 설정
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+
+const postService = require("./services/post-service");
+
 app.get("/", (req, res) => { // '/'일 때, 이 함수를 수행
     res.render("home", {title: "!!!BOARD_ME!!!"}); // {~}를 전달하고 home.handlbars를 보여주고
 });
@@ -17,7 +23,17 @@ app.get("/write", (req, res) => {
     res.render("write", {title: "!!!BOARD_ME!!!"}); 
 });
 
+app.post("/write", async (req,res) => {
+    const post = req.body;
+    const result = await postService.writePost(collection, post);
+    res.redirect(`/detail/${result.insertedId}`);
+});
+
 app.get("/detail", (req, res) => { 
+    res.render("detail", {title: "!!!BOARD_ME!!!"}); 
+});
+
+app.get("/detail/:id", (req, res) => { 
     res.render("detail", {title: "!!!BOARD_ME!!!"}); 
 });
 
