@@ -1,0 +1,31 @@
+<h1>{{title}} : 글 쓰는 중...</h1>
+
+<div>
+
+    <form name="boardForm" method="post" action="/write"> <!--action = form data를 보낼 URL-->
+        <div>
+            <label>제목</label>
+            <input type="text" name="title" value=""/>
+        </div>
+
+        <div>
+            <label>이름</label>
+            <input type="text" name="writer" value=""/>
+        </div>
+
+        <div>
+            <label>비밀번호</label>
+            <input type="password" name="password"/>
+        </div>
+
+        <div>
+            <textarea name="content" cols="50" rows="10"></textarea>
+        </div>
+
+        <div>
+            <button type="submit">저장</button>
+            <button type="button" onclick="location.href='/'">취소</button>
+        </div>
+    </form>
+
+</div>
