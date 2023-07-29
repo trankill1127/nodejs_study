@@ -5,7 +5,7 @@ const mongodbConnection = require("./configs/mongodb-connection");
 
 const handlebars = require("express-handlebars");
 
-app.engine("handlebars", handlebars.engine()); //파일 확장자, 템플릿 엔진 함수
+app.engine("handlebars", handlebars.create({helpers: require("./configs/handlebars-helpers")}).engine ); //파일 확장자, 템플릿 엔진 함수
 app.set("view engine", "handlebars"); //view engine로 사용할 템플릿 엔진 등록
 app.set("views", __dirname+"/views"); //템플릿의 위치를 views 디렉터리로 등록
 
