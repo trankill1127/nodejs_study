@@ -33,8 +33,12 @@ app.get("/detail", (req, res) => {
     res.render("detail", {title: "!!!BOARD_ME!!!"}); 
 });
 
-app.get("/detail/:id", (req, res) => { 
-    res.render("detail", {title: "!!!BOARD_ME!!!"}); 
+app.get("/detail/:id", async (req, res) => { 
+    const result = await postService.getDetailPost(collection, req.params.id);
+    res.render("detail", {
+        title: "!!!BOARD_ME!!!", 
+        post: result.value  
+    }); 
 });
 
 let collection;

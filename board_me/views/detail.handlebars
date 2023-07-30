@@ -1,24 +1,25 @@
 <h1>{{title}}</h1>
 
-    <h2 class="text-xl">첫 글입니다.</h2>
+    {{#with post}}
+    <h2 class="text-xl">{{title}}</h2>
 
     <div>
-        작성자 :<b>작가</b>
+        작성자 :<b>{{writer}}</b>
     </div>
 
     <div>
-        조회수 : 123456 | 작성일시 : 2023-07-27
+        조회수 : {{hits}} | 작성일시 : {{dateString createdDt}}
         <button onclick="modifyPost()">수정</button>
         <button onclick="deletePost()">삭제</button>
     </div>
 
     <div>
-        <pre>홀홀홀</pre>
+        <pre>{{content}}</pre>
     </div>
 
     <section>
         <div>
-            <h3>1개의 댓글이 있습니다.</h3>
+            <h3>{{lengthOfList comments}}개의 댓글이 있습니다.</h3>
         </div>
 
         <form method="post" action="/write-comment">
@@ -39,22 +40,31 @@
     </section>
 
     <section>
+        {{#each comments}}
         <div>
             <div>
-                작성자 : <b>댓글 전문가</b>
+                작성자 : <b>{{writer}}</b>
             </div>
             <div>
-                작성일시 : 2023-07-28
-                <button onclick="deleteComment('1')">삭제</button>
+                작성일시 : {{dateString createdDt}}
+                <button onclick="deleteComment('{{comment-id}}')">삭제</button>
             </div>
         </div>
         <div>
-            <pre>퍼가요~</pre>
+            <pre>{{content}}</pre>
         </div>
+        {{/each}}
     </section>
+
+    {{/with}}
 
 <footer>
     <div>
         <a href="/">목록으로</a>
     </div>
 </footer>
+
+<script>
+    async function modifyPost() { }
+    async function deletePost() { }
+</script>
