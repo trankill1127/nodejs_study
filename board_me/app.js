@@ -5,6 +5,8 @@ const mongodbConnection = require("./configs/mongodb-connection");
 
 const handlebars = require("express-handlebars");
 
+const { ObjectId } = require("mongodb");
+
 app.engine("handlebars", handlebars.create({helpers: require("./configs/handlebars-helpers")}).engine ); //파일 확장자, 템플릿 엔진 함수
 app.set("view engine", "handlebars"); //view engine로 사용할 템플릿 엔진 등록
 app.set("views", __dirname+"/views"); //템플릿의 위치를 views 디렉터리로 등록
@@ -72,6 +74,25 @@ app.post("/check-password", async(req, res) => {
     const post = await postService.getPostByIdAndPassword(collection, {id, password});
     if (post) return res.json({isExist: true});
     else return res.status(404).json({isExist: false});
+});
+
+app.delete("/delete", async(req, res)=>{
+    const { id, password } = req.body;
+    
+    try {
+        const result = await collection.deleteOne({_id: new ObjectId(id), password});
+
+        if (result.deletedCount !== 1){
+            console.log("비밀번호 오류로 인한 삭제 실패");
+            return res.json({ isSuccess: false});
+        }
+        
+        return res.json({ isSuccess: true});
+
+    } catch (error) {
+        console.error(error);
+        return res.json({ isSuccess: false});
+    }
 });
 
 let collection;
