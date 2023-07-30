@@ -33,8 +33,24 @@ async function list(collection, page, search){
     return [posts, paginatorObj];
 }
 
+async function getPostByIdAndPassword(collection, {id, password}){
+    return await collection.findOne({_id: new ObjectId(id), password}, projectionOption);
+}
+
+async function getPostById(collection, id){
+    return await collection.findOne({_id: new ObjectId(id)}, projectionOption);
+}
+
+async function updatePost(collection, id, post){
+    const toUpdatePost = { $set: { ...post } };
+    return await collection.updateOne({_id: new ObjectId(id)}, toUpdatePost); //filter, update 내용
+}
+
 module.exports = {
     writePost,
     getDetailPost,
     list,
+    getPostByIdAndPassword,
+    getPostById,
+    updatePost
 }

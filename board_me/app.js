@@ -29,7 +29,14 @@ app.get("/", async (req, res) => { // '/'일 때, 이 함수를 수행
 });
 
 app.get("/write", (req, res) => { 
-    res.render("write", {title: "!!!BOARD_ME!!!"}); 
+    res.render("write", {title: "!!!BOARD_ME!!!", mode: "create"}); 
+});
+
+app.get("/modify/:id", async (req, res) => { 
+    const {id} = req.params.id;
+    const post = await postService.getPostById(collection, req.params.id);
+    console.log(post);
+    res.render("write", {title: "!!!BOARD_ME!!!", mode: "modify", post});
 });
 
 app.post("/write", async (req,res) => {
@@ -38,8 +45,18 @@ app.post("/write", async (req,res) => {
     res.redirect(`/detail/${result.insertedId}`);
 });
 
-app.get("/detail", (req, res) => { 
-    res.render("detail", {title: "!!!BOARD_ME!!!"}); 
+app.post("/modify/", async(req, res) => {
+    const {id, title, writer, password, content} = req.body;
+    const post = {
+        title,
+        writer,
+        password,
+        content,
+        createdDt: new Date().toISOString()
+    };
+
+    const result = await postService.updatePost(collection, id, post);
+    res.redirect(`/detail/${id}`);
 });
 
 app.get("/detail/:id", async (req, res) => { 
@@ -50,10 +67,17 @@ app.get("/detail/:id", async (req, res) => {
     }); 
 });
 
+app.post("/check-password", async(req, res) => {
+    const { id, password } = req.body;
+    const post = await postService.getPostByIdAndPassword(collection, {id, password});
+    if (post) return res.json({isExist: true});
+    else return res.status(404).json({isExist: false});
+});
+
 let collection;
 
 //creates a listener on the specified port.
-app.listen(3003, async () => { 
+app.listen(3001, async () => { 
     console.log("---------- server start");
     const mongoCLI = await mongodbConnection();
     collection = mongoCLI.db("board").collection("post");

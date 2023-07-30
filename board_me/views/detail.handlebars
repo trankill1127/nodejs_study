@@ -23,6 +23,7 @@
         </div>
 
         <form method="post" action="/write-comment">
+        
             <div>
                 <div>
                     <input type="text" name="name" placeholder="이름"/>
@@ -65,6 +66,28 @@
 </footer>
 
 <script>
-    async function modifyPost() { }
+    const postOption = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }
+
+    async function modifyPost() { 
+        const password = prompt("비밀번호를 입력해주세요."); //브라우저 내장 모듈을 띄워 입력을 받을 수 있게 함.
+        
+        if (!password) return;
+
+        const result = await fetch("/check-password", {
+            ...postOption,
+            body: JSON.stringify({id: "{{post._id}}", password})
+        });
+
+        const data = await result.json();
+
+        if (data.isExist) document.location="/modify/{{post._id}}";
+        else alert("비밀번호가 올바르지 않습니다.");
+    }
+
     async function deletePost() { }
 </script>

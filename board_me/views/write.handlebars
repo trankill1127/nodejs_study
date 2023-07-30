@@ -1,16 +1,27 @@
-<h1>{{title}} : 글 쓰는 중...</h1>
+<h1>{{title}}
+    {{#if (eq mode "create")}} 글 작성하기
+    {{else}} 글 수정하기
+    {{/if}}</h1>
 
 <div>
 
-    <form name="boardForm" method="post" action="/write"> <!--action = form data를 보낼 URL-->
+    <form name="boardForm" method="post" 
+        {{#if (eq mode "create")}} action="/write"
+        {{else}} action="/modify"
+        {{/if}}><!--action = form data를 보낼 URL-->
+        
+        {{#if (eq mode "modify")}}
+        <input type="hidden" name="id" value="{{post._id}}"/>
+        {{/if}}
+
         <div>
             <label>제목</label>
-            <input type="text" name="title" value=""/>
+            <input type="text" name="title" value="{{post.title}}"/>
         </div>
 
         <div>
             <label>이름</label>
-            <input type="text" name="writer" value=""/>
+            <input type="text" name="writer" value="{{post.writer}}"/>
         </div>
 
         <div>
@@ -19,7 +30,7 @@
         </div>
 
         <div>
-            <textarea name="content" cols="50" rows="10"></textarea>
+            <textarea name="content" cols="50" rows="10">{{post.content}}</textarea>
         </div>
 
         <div>
