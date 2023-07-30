@@ -15,8 +15,17 @@ app.use(express.urlencoded({extended: true}));
 
 const postService = require("./services/post-service");
 
-app.get("/", (req, res) => { // '/'일 때, 이 함수를 수행
-    res.render("home", {title: "!!!BOARD_ME!!!"}); // {~}를 전달하고 home.handlbars를 보여주고
+app.get("/", async (req, res) => { // '/'일 때, 이 함수를 수행
+    const page = parseInt(req.query.page) || 1;
+    const search = req.query.search || "";
+
+    try {
+        const [posts, paginator] = await postService.list(collection, page, search);
+        res.render("home", {title: "!!!BOARD_ME!!!", search, paginator, posts}); // {~}를 전달하고 home.handlbars를 보여주고
+    } catch (error) {
+        console.error(error);
+        res.render("home", {title: "!!!BOARD_ME!!!"});
+    }
 });
 
 app.get("/write", (req, res) => { 
