@@ -1,3 +1,5 @@
+const paginator = require("../utils/paginator");
+
 const { ObjectId } = require("mongodb");
 
 const projectionOption = {
@@ -17,8 +19,6 @@ async function getDetailPost(collection, id){
     return await collection.findOneAndUpdate(
         {_id: new ObjectId(id)}, {$inc: {hits: 1}}, projectionOption); 
 }
-
-const paginator = require("../utils/paginator");
 
 async function list(collection, page, search){
     const perPage = 10;
@@ -42,7 +42,11 @@ async function getPostById(collection, id){
 }
 
 async function updatePost(collection, id, post){
-    const toUpdatePost = { $set: { ...post } };
+    const toUpdatePost = { 
+        $set: { 
+            ...post 
+        } 
+        };
     return await collection.updateOne({_id: new ObjectId(id)}, toUpdatePost); //filter, update 내용
 }
 

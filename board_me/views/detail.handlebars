@@ -8,7 +8,7 @@
     </div>
 
     <div>
-        조회수 : {{hits}} | 작성일시 : {{dateString createdDt}}
+        조회수 : {{hits}}   |   작성일시 : {{dateString createdDt}}
         <button onclick="modifyPost()">수정</button>
         <button onclick="deletePost()">삭제</button>
     </div>
@@ -23,10 +23,10 @@
         </div>
 
         <form method="post" action="/write-comment">
-        
+            <input type="hidden" name="id" value="{{_id}}" /> 
             <div>
                 <div>
-                    <input type="text" name="name" placeholder="이름"/>
+                    <input type="text" name="writer" placeholder="이름"/>
                     <input type="password" name="password" placeholder="비밀번호"/>
                 </div>
 
@@ -48,11 +48,11 @@
             </div>
             <div>
                 작성일시 : {{dateString createdDt}}
-                <button onclick="deleteComment('{{comment-id}}')">삭제</button>
+                <button onclick="deleteComment('{{comment_id}}')">삭제</button>
             </div>
         </div>
         <div>
-            <pre>{{content}}</pre>
+            <pre>{{comment}}</pre>
         </div>
         {{/each}}
     </section>

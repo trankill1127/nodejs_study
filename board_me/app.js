@@ -7,6 +7,8 @@ const handlebars = require("express-handlebars");
 
 const { ObjectId } = require("mongodb");
 
+const postService = require("./services/post-service");
+
 app.engine("handlebars", handlebars.create({helpers: require("./configs/handlebars-helpers")}).engine ); //파일 확장자, 템플릿 엔진 함수
 app.set("view engine", "handlebars"); //view engine로 사용할 템플릿 엔진 등록
 app.set("views", __dirname+"/views"); //템플릿의 위치를 views 디렉터리로 등록
@@ -14,8 +16,6 @@ app.set("views", __dirname+"/views"); //템플릿의 위치를 views 디렉터�
 //request의 body에 담긴 json 데이터를 사용하기 위한 미들웨어 설정
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-
-const postService = require("./services/post-service");
 
 app.get("/", async (req, res) => { // '/'일 때, 이 함수를 수행
     const page = parseInt(req.query.page) || 1;
@@ -93,6 +93,36 @@ app.delete("/delete", async(req, res)=>{
         console.error(error);
         return res.json({ isSuccess: false});
     }
+});
+
+app.post("/write-comment", async(req,res) => {
+    console.log(req.body);
+
+    const {id, writer, password, comment} = req.body;
+
+    const post = await postService.getPostById(collection, id);
+
+    console.log(post);
+
+    if (post.comments){
+        post.comments.push({
+            idx: post.comments.length+1,
+            writer, password, comment,
+            createdDt: new Date().toISOString()
+        });
+    } 
+    else {
+        post.comments = [
+            {
+                idx: 1,
+                writer, password, comment, 
+                createdDt: new Date().toISOString()
+            }
+        ];
+    }
+
+    postService.updatePost(collection, id, post);
+    return res.redirect(`/detail/${id}`);
 });
 
 let collection;
