@@ -48,7 +48,7 @@
             </div>
             <div>
                 작성일시 : {{dateString createdDt}}
-                <button onclick="deleteComment('{{comment_id}}')">삭제</button>
+                <button onclick="deleteComment('{{idx}}')">삭제</button>
             </div>
         </div>
         <div>
@@ -114,5 +114,26 @@
         }
 
         document.location="/";
+    }
+
+    async function deleteComment(idx) {
+        const password = prompt("비밀번호를 입력해주세요.");
+
+        if (!password) return;
+
+        const result = await fetch("/delete-comment", {
+            ...deleteOption,
+            body : JSON.stringify({id: "{{post._id}}", idx, password})
+        });
+
+        const data = await result.json();
+
+        if (!data.isSuccess) {
+            alert("비밀번호가 올바르지 않습니다.");
+            return;
+        }
+        
+        alert("댓글이 성공적으로 삭제되었습니다.");
+        document.location.reload(); 
     }
 </script>

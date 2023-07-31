@@ -96,18 +96,15 @@ app.delete("/delete", async(req, res)=>{
 });
 
 app.post("/write-comment", async(req,res) => {
-    console.log(req.body);
-
     const {id, writer, password, comment} = req.body;
-
     const post = await postService.getPostById(collection, id);
-
-    console.log(post);
 
     if (post.comments){
         post.comments.push({
             idx: post.comments.length+1,
-            writer, password, comment,
+            writer, 
+            password, 
+            comment,
             createdDt: new Date().toISOString()
         });
     } 
@@ -115,7 +112,9 @@ app.post("/write-comment", async(req,res) => {
         post.comments = [
             {
                 idx: 1,
-                writer, password, comment, 
+                writer, 
+                password, 
+                comment, 
                 createdDt: new Date().toISOString()
             }
         ];
@@ -124,6 +123,30 @@ app.post("/write-comment", async(req,res) => {
     postService.updatePost(collection, id, post);
     return res.redirect(`/detail/${id}`);
 });
+
+app.delete("/delete-comment", async (req,res) => {
+    const {id, idx, password} = req.body;
+
+    console.log(req.body);
+
+    const post = await collection.findOne(
+        {
+        _id: new ObjectId(id),
+        comments: {$elemMatch: {idx: parseInt(idx), password}}
+        }
+        , postService.projectionOption
+    );
+    
+    console.log(post);
+
+    if (!post){
+        return res.json({isSuccess: false});
+    }
+
+    post.comments = post.comments.filter((comment) => comment.idx != idx);
+    postService.updatePost(collection, id, post);
+    return res.json({isSuccess:true});
+})
 
 let collection;
 
